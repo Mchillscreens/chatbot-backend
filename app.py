@@ -19,19 +19,21 @@ def chat():
     user_message = data.get("message", "")
 
     try:
-        # Corrected OpenAI API call (no need to instantiate OpenAI())
+        # OpenAI API call to get the chat response
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[{"role": "user", "content": user_message}]
         )
 
-        return jsonify({"response": response['choices'][0]['message']['content']})
+        # Access the content of the chat response
+        chat_response = response['choices'][0]['message']['content']
+
+        return jsonify({"response": chat_response})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # Bind Flask app to a port that Render expects
 if __name__ == "__main__":
-    # Use Render's dynamic port or default to 5000
     port = int(os.getenv("PORT", 5000))  # Default to 5000 if no PORT is set
     app.run(host="0.0.0.0", port=port)
