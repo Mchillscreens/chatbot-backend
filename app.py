@@ -17,17 +17,13 @@ def chat():
     user_message = data.get("message", "")
 
     try:
-        # UPDATED OpenAI API call (compatible with openai>=1.0.0)
-        client = openai.OpenAI()
-        response = client.chat.completions.create(
+        # Corrected OpenAI API call (compatible with openai>=1.0.0)
+        response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[{"role": "user", "content": user_message}]
         )
 
-        return jsonify({"response": response.choices[0].message.content})
+        return jsonify({"response": response.choices[0].message["content"]})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
