@@ -22,13 +22,10 @@ def chat():
     user_message = data.get("message", "")
 
     try:
-        # OpenAI API call (using the updated chat completions endpoint)
-        response = openai.chat_completions.create(
-            model="gpt-3.5-turbo",  # Use the model you want
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message}
-            ]
+        # OpenAI API call using the new method for chat
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Use the correct model for chat
+            messages=[{"role": "user", "content": user_message}]
         )
 
         return jsonify({"response": response['choices'][0]['message']['content']})
@@ -40,4 +37,5 @@ if __name__ == "__main__":
     # Use the port from the environment variable or default to 5000
     port = int(os.getenv("PORT", 5000))
     app.run(host='0.0.0.0', port=port)  # Bind to 0.0.0.0 and use the dynamic port
+
 
