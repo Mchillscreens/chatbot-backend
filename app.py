@@ -11,7 +11,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Enable CORS for all domains
-CORS(app)  # This allows all domains to access this backend. You can customize this later for specific domains if needed.
+CORS(app)
 
 # Set OpenAI API Key
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -34,4 +34,6 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Use the port from the environment variable or default to 5000
+    port = int(os.getenv("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)  # Bind to 0.0.0.0 and use the dynamic port
