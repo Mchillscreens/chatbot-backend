@@ -2,33 +2,45 @@ import os
 from flask import Flask, request, jsonify
 import openai
 from dotenv import load_dotenv
+from flask_cors import CORS  # Import CORS
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
 
+# Initialize the Flask application
 app = Flask(__name__)
 
-# Set OpenAI API Key
+# Enable CORS for all routes
+CORS(app)
+
+# Set the OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route("/chat", methods=["POST"])
+@app.route('/chat', methods=['POST'])
 def chat():
-    data = request.json
-    user_message = data.get("message", "")
-
     try:
-        client = openai.OpenAI()
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": user_message}]
+        # Get the user message from the request
+        user_message = request.json.get('message')
+
+        if not user_message:
+            return jsonify({'error': 'No message provided'}), 400
+
+        # Make a request to the OpenAI API
+        response = openai.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "system", "content": "You are a helpful assistant."},
+                      {"role": "user", "content": user_message}]
         )
 
-        return jsonify({"response": response.choices[0].message.content})
+        # Extract the response content
+        assistant_reply = response['choices'][0]['message']['content']
+
+        return jsonify({'response': assistant_reply}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Default to port 5000 if not set
-    app.run(host="0.0.0.0", port=port, debug=True)
 
+# Run the Flask app
+if __name__ == '__main__':
+    app.run(debug=True)
