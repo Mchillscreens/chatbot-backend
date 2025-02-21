@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
 import openai
 import os
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
@@ -22,10 +22,10 @@ def chat():
     user_message = data.get("message", "")
 
     try:
-        # OpenAI API call using the new method for chat
+        # Use the correct method for chat models (ChatCompletion)
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Use the correct model for chat
-            messages=[{"role": "user", "content": user_message}]
+            model="gpt-3.5-turbo",  # Correct model
+            messages=[{"role": "user", "content": user_message}]  # Format messages correctly
         )
 
         return jsonify({"response": response['choices'][0]['message']['content']})
@@ -34,8 +34,8 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    # Use the port from the environment variable or default to 5000
     port = int(os.getenv("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)  # Bind to 0.0.0.0 and use the dynamic port
+    app.run(host='0.0.0.0', port=port)
+
 
 
